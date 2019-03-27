@@ -1,6 +1,9 @@
 package ctrl;
 
 import model.Address;
+
+import java.util.List;
+
 import db.DBAddresses;
 
 public class AddressesController {
@@ -10,8 +13,11 @@ public class AddressesController {
 		dbAddresses = new DBAddresses();
 	}
 	
-	public Address findById(int id) throws DataAccessException {
-		Address address = dbAddresses.findById(id, true);
-		return address;
+	public Address findById(int id, boolean fullAssociation) throws DataAccessException {
+		return dbAddresses.findById(id, fullAssociation);
+	}
+	
+	public List<Address> findAll(boolean fullAssociation) throws DataAccessException {
+		return dbAddresses.findAll(fullAssociation);
 	}
 }

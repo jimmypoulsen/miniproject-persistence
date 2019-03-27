@@ -1,6 +1,7 @@
 package db;
 
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 
 import ctrl.DataAccessException;
@@ -52,9 +53,14 @@ public class DBAddresses implements DBIFAddresses {
 	}
 
 	@Override
-	public List<Address> findAll() throws DataAccessException {
-		// TODO Auto-generated method stub
-		return null;
+	public List<Address> findAll(boolean fullAssociation) throws DataAccessException {
+		ResultSet rs;
+		try {
+			rs = findAllPS.executeQuery();
+		} catch (SQLException e) {
+			throw new DataAccessException("Could not read result", e);
+		}
+		return buildObjects(rs, fullAssociation);
 	}
 
 	@Override
@@ -111,5 +117,17 @@ public class DBAddresses implements DBIFAddresses {
 			throw new DataAccessException("Could not read result", e);
 		}
 		return a;
+	}
+	
+	private List<Address> buildObjects(ResultSet rs, boolean fullAssociation) throws DataAccessException {
+		List<Address> res = new ArrayList<>();
+		try {
+			while(rs.next()) {
+				res.add(buildObject(rs, fullAssociation));
+			}
+		} catch (SQLException e) {
+			throw new DataAccessException("Could not read result", e);
+		}
+		return res;
 	}
 }
