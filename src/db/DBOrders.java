@@ -21,11 +21,17 @@ public class DBOrders implements DBIFOrders {
 	private static final String INSERT_Q = "insert into orders (total, deliveryStatus, deliveryDate, customer_id) values (?, ?, ?, ?)";
 	private PreparedStatement insertPS;
 	
+	private static final String INSERT_ORDER_LINE_Q = "insert into order_lines (quantity, subtotal, order_id, product_id) values (?, ?, ?, ?)";
+	private PreparedStatement insertOLPS;
+	
 	private static final String DELETE_Q = "delete from orders where id = ?";
 	private PreparedStatement deletePS;
 	
 	private static final String FIND_ORDER_LINES_BY_ID_Q = "select * from order_lines where order_id = ?";
 	private PreparedStatement findOrderLinesByIdPS;
+	
+	private static final String GET_LAST_ORDER_ID_Q = "SELECT IDENT_CURRENT('orders') AS id";
+	private PreparedStatement getLastOrderIdPS;
 	
 	public DBOrders() throws DataAccessException {
 		dbProducts = new DBProducts();
@@ -38,8 +44,10 @@ public class DBOrders implements DBIFOrders {
 			this.findByIdPS = con.prepareStatement(FIND_BY_ID_Q);
 			this.findAllPS = con.prepareStatement(FIND_ALL_Q);
 			this.insertPS = con.prepareStatement(INSERT_Q);
+			this.insertOLPS = con.prepareStatement(INSERT_ORDER_LINE_Q);
 			this.deletePS = con.prepareStatement(DELETE_Q);
 			this.findOrderLinesByIdPS = con.prepareStatement(FIND_ORDER_LINES_BY_ID_Q);
+			this.getLastOrderIdPS = con.prepareStatement(GET_LAST_ORDER_ID_Q);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -73,8 +81,41 @@ public class DBOrders implements DBIFOrders {
 
 	@Override
 	public Order insert(Order order) throws DataAccessException {
-		// TODO Auto-generated method stub
-		return null;
+		try {
+			insertPS.setDouble(1, order.getTotal());
+			insertPS.setString(2, order.getDeliveryStatus());
+			insertPS.setString(3, order.getDeliveryDate());
+			insertPS.setInt(4, order.getCustomerId());
+		} catch (SQLException e) {
+			throw new DataAccessException("Could not bind", e);
+		}
+		try {
+			insertPS.executeUpdate();
+			for(int i = 0; i < order.getOrderLines().size(); i++) {
+				insertOrderLine(getLastOrderId(), order.getOrderLines().get(i));
+			}
+		} catch (SQLException e) {
+			// e.printStackTrace();
+			throw new DataAccessException("Could not insert", e);
+		}
+		return order;
+	}
+	
+	public OrderLine insertOrderLine(int orderId, OrderLine orderLine) throws DataAccessException {
+		try {
+			insertOLPS.setInt(1, orderLine.getQuantity());
+			insertOLPS.setDouble(2, orderLine.getSubtotal());
+			insertOLPS.setInt(3, orderId);
+			insertOLPS.setInt(4, orderLine.getProduct().getId());
+		} catch (SQLException e) {
+			throw new DataAccessException("Could not bind", e);
+		}
+		try {
+			insertOLPS.executeUpdate();
+		} catch (SQLException e) {
+			throw new DataAccessException("Could not insert", e);
+		}
+		return orderLine;
 	}
 
 	@Override
@@ -93,6 +134,18 @@ public class DBOrders implements DBIFOrders {
 		}
 		return buildOrderLines(rs);
 	}
+	
+	public int getLastOrderId() throws DataAccessException {
+		int lastOrderId = 0;
+		try {
+			ResultSet rs = getLastOrderIdPS.executeQuery();
+			if(rs.next())
+				lastOrderId = rs.getInt("id");
+		} catch (SQLException e) {
+			throw new DataAccessException("Could not read result", e);
+		}
+		return lastOrderId;
+	}
 
 	private Order buildObject(ResultSet rs, boolean fullAssociation) throws DataAccessException {
 		Order o = new Order();
@@ -103,7 +156,7 @@ public class DBOrders implements DBIFOrders {
 			o.setDeliveryDate(rs.getString("deliveryDate"));
 			o.setCustomerId(rs.getInt("customer_id"));
 			if(fullAssociation) {
-				ArrayList<OrderLine> orderLines = findOrderLines(1);
+				ArrayList<OrderLine> orderLines = findOrderLines(rs.getInt("id"));
 				for(int i = 0; i < orderLines.size(); i++) {
 					o.addOrderLine(orderLines.get(i));
 				}

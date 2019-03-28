@@ -13,9 +13,7 @@ public class OrderLine {
 		this.id = id;
 	}
 
-	public OrderLine(int id, int quantity, double subtotal, Product p, Order o) {
-		super();
-		this.id = id;
+	public OrderLine(int quantity, double subtotal, Product p, Order o) {
 		this.quantity = quantity;
 		this.subtotal = subtotal;
 		this.product = p;

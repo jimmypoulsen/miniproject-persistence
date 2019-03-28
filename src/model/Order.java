@@ -15,13 +15,12 @@ public class Order {
 		orderLines = new ArrayList<>();
 	}
 	
-	public Order(int id) {
+	public Order(int customerId) {
 		orderLines = new ArrayList<>();
-		this.id = id;
+		this.customerId = id;
 	}
 
-	public Order(int id, double total, String deliveryStatus, String deliveryDate, int customerId) {
-		this.id = id;
+	public Order(double total, String deliveryStatus, String deliveryDate, int customerId) {
 		this.total = total;
 		this.deliveryStatus = deliveryStatus;
 		this.deliveryDate = deliveryDate;
@@ -88,6 +87,7 @@ public class Order {
 		res += "Total: " + getTotal() + "\n";
 		res += "Delivery status: " + getDeliveryStatus() + "\n";
 		res += "Delivery date: " + getDeliveryDate() + "\n";
+		res += "Customer ID: " + getCustomerId() + "\n";
 		res += "-- Order lines --\n";
 		if(this.getOrderLines().size() > 0) {
 			for(OrderLine oL : getOrderLines()) {
