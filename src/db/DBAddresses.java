@@ -9,6 +9,16 @@ import model.Address;
 
 public class DBAddresses implements DBIFAddresses {
 	private static final String FIND_BY_ID_Q = "select * from addresses where id = ?";
+	// or
+	/*select 
+	    a.id,
+	    a.address, 
+	    z.city as city, 
+	    c.name as country
+	from dbo.addresses a
+	join dbo.zip_cities z on z.zip = a.zip
+	join dbo.countries c on z.country_id = c.id
+	where a.id = 1;*/
 	private PreparedStatement findByIdPS;
 	
 	private static final String FIND_ALL_Q = "select * from addresses";
