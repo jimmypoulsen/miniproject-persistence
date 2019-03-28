@@ -5,6 +5,8 @@ import model.*;
 
 public class MainMenu {
 	private AddressesController aCtrl;
+	private ProductsController pCtrl;
+	private OrdersController oCtrl;
 	
 	public static void main(String[] args) throws DataAccessException {
 		new MainMenu();
@@ -20,11 +22,34 @@ public class MainMenu {
 		}
 		
 		try {
-			aCtrl.findAll(true).forEach(a -> {
-				System.out.println(a.getAddress());
+			aCtrl.findAll(true).forEach(res -> {
+				System.out.println(res.getAddress() + " " + res.getZipcode() + " " + res.getCity() + " " + res.getCountry());
 			});
 		} catch (NullPointerException e) {
 			System.out.println("Could not find any addresses");
+		}
+		
+		pCtrl = new ProductsController();
+		try {
+			Product res = pCtrl.findById(1);
+			System.out.println(res.getName() + " koster: " + res.getPurchasePrice() + " kr.");
+		} catch (NullPointerException e) {
+			e.printStackTrace();
+		}
+		
+		try {
+			pCtrl.findAll().forEach(res -> {
+				System.out.println(res.getName() + " koster: " + res.getPurchasePrice() + " kr.");
+			});
+		} catch (NullPointerException e) {
+			e.printStackTrace();
+		}
+		
+		oCtrl = new OrdersController();
+		try {
+			System.out.println(oCtrl.findById(1));
+		} catch (NullPointerException e) {
+			e.printStackTrace();
 		}
 	}
 }

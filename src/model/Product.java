@@ -6,6 +6,7 @@ public class Product {
 	private double purchasePrice;
 	private double salesPrice;
 	private int stock;
+	private int supplierId;
 	
 	public Product() {}
 	
@@ -13,12 +14,13 @@ public class Product {
 		this.id = id;
 	}
 
-	public Product(int id, String name, double purchasePrice, double salesPrice, int stock) {
+	public Product(int id, String name, double purchasePrice, double salesPrice, int stock, int supplierId) {
 		this.id = id;
 		this.name = name;
 		this.purchasePrice = purchasePrice;
 		this.salesPrice = salesPrice;
 		this.stock = stock;
+		this.supplierId = supplierId;
 	}
 
 	public int getId() {
@@ -59,5 +61,13 @@ public class Product {
 
 	public void setStock(int stock) {
 		this.stock = stock;
+	}
+	
+	public int getSupplierId() {
+		return supplierId;
+	}
+
+	public void setSupplierId(int supplierId) {
+		this.supplierId = supplierId;
 	}
 }

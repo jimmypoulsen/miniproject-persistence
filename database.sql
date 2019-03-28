@@ -1,3 +1,5 @@
+drop table order_lines;
+drop table orders;
 drop table products;
 drop table suppliers;
 drop table customers;
@@ -68,6 +70,30 @@ create table products
   supplier_id int not null,
 
   primary key (id),
-
   constraint fk_product_supplier foreign key (supplier_id) references suppliers(id)
+);
+
+create table orders
+(
+  id int IDENTITY(1, 1),
+  total float not null,
+  deliveryStatus varchar(30) not null,
+  deliveryDate varchar(15) not null,
+  customer_id int not null,
+
+  primary key (id),
+  constraint fk_orders_customer foreign key (customer_id) references customers(id)
+);
+
+create table order_lines
+(
+  id int IDENTITY(1, 1),
+  quantity int not null,
+  subtotal float not null,
+  order_id int not null,
+  product_id int not null,
+
+  primary key (id),
+  constraint fk_order_lines_order foreign key (order_id) references orders(id),
+  constraint fk_order_lines_product foreign key (product_id) references products(id)
 );
