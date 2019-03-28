@@ -55,6 +55,8 @@ public class OrdersController {
 			double subtotal = quantity * p.getPurchasePrice();
 			currOrder.addOrderLine(new OrderLine(quantity, subtotal, p, currOrder));
 			res = true;
+		} else {
+			res = false;
 		}
 		return res;
 	}

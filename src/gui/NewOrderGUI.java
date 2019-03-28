@@ -9,6 +9,8 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JTextField;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
 import java.awt.Container;
 import java.awt.Color;
 import javax.swing.GroupLayout;
@@ -113,7 +115,7 @@ public class NewOrderGUI extends JDialog {
 				.addGroup(gl_contentPanel.createSequentialGroup()
 					.addGap(159)
 					.addComponent(btnAddToOrder)
-					.addContainerGap(164, Short.MAX_VALUE))
+					.addContainerGap(158, Short.MAX_VALUE))
 				.addGroup(gl_contentPanel.createSequentialGroup()
 					.addGap(181)
 					.addComponent(lblOrderLines)
@@ -132,17 +134,17 @@ public class NewOrderGUI extends JDialog {
 							.addGap(5)
 							.addComponent(textFieldCustomerId, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(textFieldProductId, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
+							.addComponent(textFieldProductId)))
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addGroup(gl_contentPanel.createParallelGroup(Alignment.LEADING, false)
 						.addComponent(lblQuantity, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-						.addComponent(textFieldQuantity))
+						.addComponent(textFieldQuantity, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
 					.addGap(18)
 					.addComponent(btnAddToOrder)
 					.addGap(36)
 					.addComponent(lblOrderLines)
 					.addPreferredGap(ComponentPlacement.UNRELATED)
-					.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 110, Short.MAX_VALUE))
+					.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 123, Short.MAX_VALUE))
 		);
 		
 		orderLinesTable = new JTable();
@@ -244,7 +246,9 @@ public class NewOrderGUI extends JDialog {
 				quantity = Integer.parseInt(textFieldQuantity.getText());
 			}
 
-			ordersCtrl.addOrderLineToCurrOrder(quantity, productId);
+			if(!ordersCtrl.addOrderLineToCurrOrder(quantity, productId)) {
+				JOptionPane.showMessageDialog(this, "Product doesn't exist!", "Error", JOptionPane.ERROR_MESSAGE);
+			}
 			textFieldProductId.setText("");
 			textFieldQuantity.setText("");
 			System.out.println(ordersCtrl.getCurrOrder());
