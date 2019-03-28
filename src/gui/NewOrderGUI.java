@@ -26,6 +26,8 @@ import model.Product;
 public class NewOrderGUI extends JDialog {
 	private OrdersController ordersCtrl;
 	private ProductsController productsCtrl;
+	private JTable orderLinesTable;
+	private OrderLinesTableModel orderLinesTableModel;
 
 	private final JPanel contentPanel = new JPanel();
 	private JTextField textFieldCustomerId;
@@ -37,7 +39,6 @@ public class NewOrderGUI extends JDialog {
 	private JButton btnAddToOrder;
 	private JScrollPane scrollPane;
 	private JLabel lblOrderLines;
-	private JTable orderLinesTable;
 	private JButton okButton;
 
 	/**
@@ -164,6 +165,11 @@ public class NewOrderGUI extends JDialog {
 			}
 			{
 				JButton cancelButton = new JButton("Cancel");
+				cancelButton.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						cancel();
+					}
+				});
 				cancelButton.setActionCommand("Cancel");
 				buttonPane.add(cancelButton);
 			}
@@ -179,6 +185,8 @@ public class NewOrderGUI extends JDialog {
 		} catch (DataAccessException e) {
 			e.printStackTrace();
 		}
+		orderLinesTableModel = new OrderLinesTableModel();
+		orderLinesTable.setModel(orderLinesTableModel);
 		hideOrderLineContent();
 	}
 	
@@ -237,16 +245,31 @@ public class NewOrderGUI extends JDialog {
 			}
 
 			ordersCtrl.addOrderLineToCurrOrder(quantity, productId);
+			textFieldProductId.setText("");
+			textFieldQuantity.setText("");
 			System.out.println(ordersCtrl.getCurrOrder());
+			showOrderLines();
 		}
+	}
+	
+	private void showOrderLines() {
+		orderLinesTableModel.setModelData(ordersCtrl.getCurrOrder().getOrderLines());
 	}
 	
 	private void createOrder() {
 		try {
 			ordersCtrl.addOrder(ordersCtrl.getCurrOrder());
+			cancel();
 		} catch (DataAccessException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	private void cancel() {
+		textFieldProductId.setText("");
+		textFieldQuantity.setText("");
+		OrdersGUI.getInstance().displayOrders();
+		this.setVisible(false);
 	}
 }

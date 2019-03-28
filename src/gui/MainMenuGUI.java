@@ -9,7 +9,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.JTabbedPane;
 
 public class MainMenuGUI extends JFrame {
-
+	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 
 	/**
